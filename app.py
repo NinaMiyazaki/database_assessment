@@ -1,4 +1,20 @@
+
+
+# Imports
 import sqlite3
 
-db = sqlite3.connect('teacher_feedback.db')
+# Constants
+DATABASE = 'teacher_feedback.db'
+
+# Functions
+def print_all_teacher_info():
+    with sqlite3.connect(DATABASE) as db:
+        cursor = db.cursor()
+        sql = "SELECT teacher_name, main_subject FROM teacher;"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        #
+        print(results)
+
+
 
