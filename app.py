@@ -24,7 +24,7 @@ def print_all_teacher_info():
         # Prints results clearly
         print('TEACHER NAME   MAIN SUBJECT')
         for info in results:
-            print(f'{info[0]: <15}{info[1]}')
+            print(f'{info[0]: <15}{info[1]}') # could print it in alphabetical order?
 
 def print_teachers_by_subject():
     for number, subject in subjects.items():
@@ -34,10 +34,10 @@ def print_teachers_by_subject():
             if choice in subjects:
                 with sqlite3.connect(DATABASE) as db:
                     cursor = db.cursor()
-                    sql = "SELECT teacher_name FROM teacher WHERE main_subject = ?;" # order the names alphabetically
+                    sql = "SELECT teacher_name FROM teacher WHERE main_subject = ? ORDER BY teacher_name;" 
                     cursor.execute(sql, (subjects[choice],))
                     results = cursor.fetchall()
-                    print(f'Teachers who teach {subjects[choice]}:') # maybe change this sentence
+                    print(f'Teachers who teach {subjects[choice]}:')
                     for teacher in results:
                         print(teacher[0])
             else:
@@ -45,18 +45,19 @@ def print_teachers_by_subject():
         except ValueError:
             print('Please enter a number.')
 
-
-            
-    
- 
-
-        sql = "SELECT teacher_name, main_subject FROM teacher;"
+def comment_on_teacher():
+    with sqlite3.connect(DATABASE) as db:
+        cursor = db.cursor()
+        sql = "SELECT teacher_id, teacher_name FROM teacher ORDER BY teacher_name;"
         cursor.execute(sql)
         results = cursor.fetchall()
-        # Prints results clearly
-        print('TEACHER NAME   MAIN SUBJECT')
-        for info in results:
-            print(f'{info[0]: <15}{info[1]}')
+        for id, teacher in results:
+            print(f'{id}. {teacher}') 
+        try:
+            choice = int(input('Select a teacher by entering the corresponding number: '))
+    
+
+
 
 
 # Main code
@@ -67,10 +68,15 @@ if __name__ == "__main__":
         '''
         What would you like to do?
         1. Print all teacher information
-        Select a number: ''')
+        2. Print teachers by subject
+        Select a number: ''') # sort out that it prints this in the middle of the terminal 
         # remember to add an exit option and ask for them to enter a number 
         # 
         if choice == '1':
                 print_all_teacher_info()
+        elif choice == '2':
+            print_teachers_by_subject()
         else: 
             print('Please enter a valid number.')
+
+# rememeber to test inputs by inputting enter
