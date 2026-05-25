@@ -48,7 +48,7 @@ def print_teachers_by_subject():
 def comment_on_teacher():
     with sqlite3.connect(DATABASE) as db:
         cursor = db.cursor()
-        sql = "SELECT teacher_id, teacher_name FROM teacher ORDER BY teacher_name;"
+        sql = "SELECT id, teacher_name FROM teacher;"
         cursor.execute(sql)
         results = cursor.fetchall()
         for id, teacher in results:
@@ -56,10 +56,10 @@ def comment_on_teacher():
         try:
             choice = int(input('Select a teacher by entering the corresponding number: '))
             if 1 <= choice <= len(results):
-                selected_teacher = results[choice]
+                selected_teacher = results[choice - 1]
                 teacher_id = selected_teacher[0]
                 teacher_name = selected_teacher[1]
-                comment = (f'Enter your comment for {teacher_name} (include date and period if relevant): ')
+                comment = input(f'Enter your comment for {teacher_name} (include date and period if relevant): ')
                 sql = "INSERT INTO feedback (teacher_id, comment) VALUES (?, ?);"
                 cursor.execute(sql, (teacher_id, comment))
                 db.commit()
@@ -69,7 +69,6 @@ def comment_on_teacher():
         except ValueError:
             print('Please enter a number.')
 
-def 
 
 
 
