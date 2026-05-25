@@ -22,7 +22,7 @@ def print_all_teacher_info():
         cursor.execute(sql)
         results = cursor.fetchall()
         # Prints results clearly
-        print('TEACHER NAME   MAIN SUBJECT')
+        print('TEACHER NAME:  MAIN SUBJECT:')
         for info in results:
             print(f'{info[0]: <15}{info[1]}') # could print it in alphabetical order?
 
@@ -55,8 +55,21 @@ def comment_on_teacher():
             print(f'{id}. {teacher}') 
         try:
             choice = int(input('Select a teacher by entering the corresponding number: '))
-    
+            if 1 <= choice <= len(results):
+                selected_teacher = results[choice]
+                teacher_id = selected_teacher[0]
+                teacher_name = selected_teacher[1]
+                comment = (f'Enter your comment for {teacher_name} (include date and period if relevant): ')
+                sql = "INSERT INTO feedback (teacher_id, comment) VALUES (?, ?);"
+                cursor.execute(sql, (teacher_id, comment))
+                db.commit()
+                print('Comment added successfully.')
+            else:
+                print('Please enter a valid number.')
+        except ValueError:
+            print('Please enter a number.')
 
+def 
 
 
 
@@ -69,6 +82,9 @@ if __name__ == "__main__":
         What would you like to do?
         1. Print all teacher information
         2. Print teachers by subject
+        3. Comment on a teacher
+        4.
+        5. Exit
         Select a number: ''') # sort out that it prints this in the middle of the terminal 
         # remember to add an exit option and ask for them to enter a number 
         # 
@@ -76,6 +92,10 @@ if __name__ == "__main__":
                 print_all_teacher_info()
         elif choice == '2':
             print_teachers_by_subject()
+        elif choice == '3':
+            comment_on_teacher()
+        elif choice == '5':
+            break
         else: 
             print('Please enter a valid number.')
 
