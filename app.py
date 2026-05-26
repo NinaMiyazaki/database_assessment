@@ -69,9 +69,6 @@ def comment_on_teacher():
         except ValueError:
             print('Please enter a number.')
 
-
-
-
 # Main code
 if __name__ == "__main__":
     while True:
@@ -82,7 +79,7 @@ if __name__ == "__main__":
         1. Print all teacher information
         2. Print teachers by subject
         3. Comment on a teacher
-        4.
+        4. Print teacher feedback
         5. Exit
         Select a number: ''') # sort out that it prints this in the middle of the terminal 
         # remember to add an exit option and ask for them to enter a number 
@@ -93,6 +90,8 @@ if __name__ == "__main__":
             print_teachers_by_subject()
         elif choice == '3':
             comment_on_teacher()
+        elif choice == '4':
+
         elif choice == '5':
             break
         else: 
