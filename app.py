@@ -1,11 +1,16 @@
-#
+# Docstring - Nina Miyazaki - Teacher Feedback Database Application
 
 # Imports
 import sqlite3
 
 # Constants and variables
-# Dictionary storing a number and subject 
+# Database file name
 DATABASE = 'teacher_feedback.db'
+# The smallest number an id can be in this database
+minimum_id = 1
+# Number used to see if all password attempts are gone
+no_attempts_left = 0
+# Dictionary storing a number and subject 
 subjects = {
     1: 'English',
     2: 'Mathematics',
@@ -39,9 +44,12 @@ def print_all_teacher_info():
         for info in results:
             print(f'{info[0]: <15}{info[1]}')
 
+# Displays teachers based on subject selected by user
 def print_teachers_by_subject():
+    # Displays subjects dictionary nicely
     for number, subject in subjects.items():
         print(f'{number}. {subject}')
+    # Asks user to select a subject until input is valid
     while True:
         try:
             choice = int(input('Select a subject by entering the corresponding number: '))
@@ -52,46 +60,57 @@ def print_teachers_by_subject():
             break
         else:
             print('Please enter a valid number.')
+    # Connects to the database
     with sqlite3.connect(DATABASE) as db:
         cursor = db.cursor()
+        # Gets all teachers that teach the subject user selected
         sql = "SELECT teacher_name FROM teacher WHERE main_subject = ? ORDER BY teacher_name;"
         cursor.execute(sql, (subjects[choice],))
         results = cursor.fetchall()
+        # Displays results nicely 
         print(f'TEACHERS WHO TEACH {subjects[choice].upper()}:')
         for teacher in results:
             print(teacher[0])
 
 # Allows user to comment on a teacher
 def comment_on_teacher():
+    # Connects to the database
     with sqlite3.connect(DATABASE) as db:
         cursor = db.cursor()
+        # Retrieves all teacher ids and names
         sql = "SELECT id, teacher_name FROM teacher;"
         cursor.execute(sql)
         results = cursor.fetchall()
+        # Displays the results nicely 
         for id, teacher in results:
             print(f'{id}. {teacher}')
+        # Asks user to select a number until input corresponds with a teacher
         while True:
             try:
                 choice = int(input('Select a teacher by entering the corresponding number: '))
             except ValueError:
                 print('Please enter a number.')
                 continue
-            if 1 <= choice <= len(results):
+            if minimum_id <= choice <= len(results):
                 break
             else:
                 print('Please enter a valid number.')
+        # Teacher id and name of selected teacher are saved to variables 
         selected_teacher = results[choice - 1]
         teacher_id = selected_teacher[0]
         teacher_name = selected_teacher[1]
+        # Asks user for a comment until one is inputted 
         while True:
             comment = input(f'Enter your comment for {teacher_name} (include date and period if relevant): ').strip()
             if not comment:
                 print("Comment cannot be empty. Please try again.")
             else:
                 break
+        # Adds comment to database
         sql = "INSERT INTO feedback (teacher_id, comment) VALUES (?, ?);"
         cursor.execute(sql, (teacher_id, comment))
         db.commit()
+        # Tells user comment has been added
         print('Comment added successfully.')
 
 # Allows a teacher to log in and view their feedback
@@ -115,12 +134,12 @@ def print_teacher_feedback():
             except ValueError:
                 print('Please enter a number.')
                 continue
-            if 1 <= choice <= len(results):
+            if minimum_id <= choice <= len(results):
                 break
             else:
                 print('Please enter a valid number.')
         # Loop runs until password is correct or attempts run out
-        while attempts > 0:
+        while attempts > no_attempts_left:
             password = input('Enter password: ')
             if passwords.get(choice) == password:
                 print('Correct password.')
@@ -128,11 +147,11 @@ def print_teacher_feedback():
             else:
                 print('Incorrect password.')
             attempts -= 1
-            if attempts == 0:
+            if attempts == no_attempts_left:
                 print('Too many incorrect attempts.')
                 return
         # Gets all comments for the selected teacher
-        sql = "SELECT comment FROM feedback WHERE teacher_id = ?"
+        sql = "SELECT comment FROM feedback WHERE teacher_id = ?;"
         cursor.execute(sql, (choice,))
         results = cursor.fetchall()
         # Displays comments if any
@@ -170,4 +189,4 @@ Select a number: ''')
         else:
             print('Please enter a valid number.')
 
-# rememeber to test inputs by inputting enter
+# if i had extra time i probably would have added the passwords to the database to minimize error
